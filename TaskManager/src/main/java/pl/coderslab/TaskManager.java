@@ -24,34 +24,84 @@ public class TaskManager {
         SCANNER.useDelimiter("\n");
         initialFileRead("tasks.csv");
         showGreeting();
-        runMenu();
+        selectAndRunMenuOption();
+
+    }
+
+
+    private static void showGreeting() {
+        System.out.print(color.GREEN);
+        System.out.println("--------------------");
+        System.out.println("*** TASK MANAGER ***");
+        System.out.println("--------------------");
+        resetColor();
+        showMenu();
+    }
+
+    private static void showMenu() {
+        System.out.print(color.CYAN + "Wybierz opcję: ");
+        System.out.print(color.BLUE_BOLD + "add | remove | list | exit -> ");
+        resetColor();
+    }
+
+    private static void selectAndRunMenuOption() {
+
+        while (SCANNER.hasNext()) {
+
+            String input = SCANNER.next().trim();
+
+            switch (input) {
+                case "add":
+                    addTask();
+//                    runMenu();
+                    break;
+                case "remove":
+                    removeTask();
+//                    runMenu();
+                    break;
+                case "list":
+                    showTaskList();
+//                    runMenu();
+                    break;
+                case "exit":
+//                saveTaskstoFile(); TODO
+                    System.out.println(color.RED + "Twoja lista została zapisana. KONIEC PROGRAMU!");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println(color.YELLOW + "Nieprawidłowa komenda!!!");
+            }
+            showMenu();
+        }
 
     }
 
     private static void addTask() {
-        SCANNER.useDelimiter("\n");
+//        SCANNER.useDelimiter("\n");
 
         Task task = new Task();
         System.out.print(color.YELLOW_BRIGHT);
 
         System.out.print("Podaj opis zadania: ");
-        String desc = SCANNER.next();
+        String desc = SCANNER.next().trim();
         task.setTaskDescription(desc);
 
         System.out.print("Podaj datę realizacji zadania: ");
-        String date = SCANNER.next();
+        String date = SCANNER.next().trim();
         task.setTaskDate(date);
 
 
         System.out.print("Czy zadanie jest istotne? (" + YES_NO_OPTIONS + color.YELLOW_BRIGHT + "): ");
 
+//        SCANNER.useDelimiter(" ");
+
         while (true) {
 
-            String importantVal = SCANNER.next();
-            if (Objects.equals(importantVal, YES_VALUE)) {
+            String confirm = SCANNER.next().trim();
+            if (Objects.equals(confirm, YES_VALUE)) {
                 task.setTaskImportant(true);
                 break;
-            } else if (Objects.equals(importantVal, NO_VALUE)) {
+            } else if (Objects.equals(confirm, NO_VALUE)) {
                 task.setTaskImportant(false);
                 break;
             } else {
@@ -79,50 +129,6 @@ public class TaskManager {
         System.out.println();
     }
 
-    private static void showGreeting() {
-        System.out.print(color.GREEN);
-        System.out.println("--------------------");
-        System.out.println("*** TASK MANAGER ***");
-        System.out.println("--------------------");
-        resetColor();
-    }
-
-    private static void runMenu() {
-        System.out.print(color.CYAN + "Wybierz opcję: ");
-        System.out.print(color.BLUE_BOLD + "add | remove | list | exit -> ");
-        resetColor();
-
-        selectAndRunMenuOption();
-    }
-
-    private static void selectAndRunMenuOption() {
-
-        String input = SCANNER.next();
-
-        switch (input) {
-            case "add":
-                addTask();
-                runMenu();
-                break;
-            case "remove":
-                removeTask(); // TODO
-                runMenu();
-                break;
-            case "list":
-                showTaskList();
-                runMenu();
-                break;
-            case "exit":
-//                saveTaskstoFile(); TODO
-                System.out.println(color.RED + "Twoja lista została zapisana. KONIEC PROGRAMU!");
-                break;
-            default:
-                System.out.println(color.YELLOW + "Nieprawidłowa komenda!!!");
-                runMenu();
-        }
-
-    }
-
     private static void removeTask() {
         showTaskList();
 
@@ -130,22 +136,22 @@ public class TaskManager {
 
         while (!SCANNER.hasNextInt()) {
             SCANNER.next();
-            System.out.print(color.YELLOW + "Nieprawidłowe dane!!! \nPodaj prawidłowy numer numer zadania (Musi być większy lub równy 1: )");
+            System.out.print(color.YELLOW + "Nieprawidłowe dane!!! \nPodaj prawidłowy numer zadania (Musi być większy lub równy 1: )");
         }
 
         int taskNumberToRemove = SCANNER.nextInt();
         int index = taskNumberToRemove - 1;
 
-        boolean taskExists = index > 0 && index <taskList.size();
+        boolean taskExists = index >= 0 && index < taskList.size();
 
         if (taskExists) {
             System.out.println(color.CYAN + "Czy na pewno usunąć zadanie nr: " + taskNumberToRemove + "?");
             while (true) {
 
-                String confirm = SCANNER.next();
+                String confirm = SCANNER.next().trim();
                 if (Objects.equals(confirm, YES_VALUE)) {
                     taskList.remove(index);
-                    System.out.println(color.GREEN_BOLD_BRIGHT + "Zadanie " + taskNumberToRemove + " zostało usunięte z listy");
+                    System.out.println(color.GREEN_BOLD_BRIGHT + "Zadanie nr " + color.RESET + taskNumberToRemove + color.GREEN_BOLD_BRIGHT + " zostało usunięte z listy");
                     break;
                 } else if (Objects.equals(confirm, NO_VALUE)) {
                     break;
@@ -156,6 +162,7 @@ public class TaskManager {
 
         } else {
             System.out.println("Zadanie o numerze " + taskNumberToRemove + " nie isnieje");
+
         }
         System.out.println();
 

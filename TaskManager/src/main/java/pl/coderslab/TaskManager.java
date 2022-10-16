@@ -17,6 +17,7 @@ public class TaskManager {
     private static final String YES_VALUE = "t";
     private static final String NO_VALUE = "n";
     private static final String YES_NO_OPTIONS = color.WHITE + YES_VALUE + "/" + NO_VALUE;
+    private static final String GOODBYE_MESSAGE = color.RED + "Twoja lista została zapisana. KONIEC PROGRAMU!";
 
 
     public static void main(String[] args) {
@@ -48,7 +49,7 @@ public class TaskManager {
 
         while (SCANNER.hasNext()) {
 
-            String input = SCANNER.next().trim();
+            String input = SCANNER.next().trim().toLowerCase();
 
             switch (input) {
                 case "add":
@@ -65,7 +66,8 @@ public class TaskManager {
                     break;
                 case "exit":
 //                saveTaskstoFile(); TODO
-                    System.out.println(color.RED + "Twoja lista została zapisana. KONIEC PROGRAMU!");
+
+                    animateMessage(GOODBYE_MESSAGE);
                     System.exit(0);
                     break;
                 default:
@@ -74,6 +76,18 @@ public class TaskManager {
             showMenu();
         }
 
+    }
+
+    private static void animateMessage(String goodbyeMessage) {
+        char[] arr = goodbyeMessage.toCharArray();
+        for (char c: arr) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.print(c);
+        }
     }
 
     private static void addTask() {
@@ -97,7 +111,7 @@ public class TaskManager {
 
         while (true) {
 
-            String confirm = SCANNER.next().trim();
+            String confirm = SCANNER.next().trim().toLowerCase();
             if (Objects.equals(confirm, YES_VALUE)) {
                 task.setTaskImportant(true);
                 break;
@@ -105,7 +119,7 @@ public class TaskManager {
                 task.setTaskImportant(false);
                 break;
             } else {
-                System.out.println(color.RED + "Nieprawidłowa opcja! wpisz " + YES_NO_OPTIONS);
+                showIllegalConfirmOption();
             }
         }
         taskList.add(task);
@@ -132,11 +146,11 @@ public class TaskManager {
     private static void removeTask() {
         showTaskList();
 
-        System.out.print(color.CYAN + "Podaj numer zadania do " + color.RED_UNDERLINED + "usunięcia" + color.CYAN + ":");
+        System.out.print(color.CYAN + "Podaj numer zadania do " + color.RED_UNDERLINED + "usunięcia" + color.CYAN + ": ");
 
         while (!SCANNER.hasNextInt()) {
             SCANNER.next();
-            System.out.print(color.YELLOW + "Nieprawidłowe dane!!! \nPodaj prawidłowy numer zadania (Musi być większy lub równy 1: )");
+            System.out.print(color.YELLOW + "Nieprawidłowe dane!!! \nPodaj prawidłowy numer zadania (Musi być większy lub równy 1): ");
         }
 
         int taskNumberToRemove = SCANNER.nextInt();
@@ -145,18 +159,20 @@ public class TaskManager {
         boolean taskExists = index >= 0 && index < taskList.size();
 
         if (taskExists) {
-            System.out.println(color.CYAN + "Czy na pewno usunąć zadanie nr: " + taskNumberToRemove + "?");
+            System.out.print(color.CYAN + "Czy na pewno usunąć zadanie nr " + color.YELLOW_BOLD_BRIGHT + taskNumberToRemove
+                    + color. CYAN + " ? (" + YES_NO_OPTIONS + color.CYAN + "): ");
             while (true) {
 
-                String confirm = SCANNER.next().trim();
+                String confirm = SCANNER.next().trim().toLowerCase();
                 if (Objects.equals(confirm, YES_VALUE)) {
                     taskList.remove(index);
-                    System.out.println(color.GREEN_BOLD_BRIGHT + "Zadanie nr " + color.RESET + taskNumberToRemove + color.GREEN_BOLD_BRIGHT + " zostało usunięte z listy");
+                    System.out.println(color.GREEN_BOLD_BRIGHT + "Zadanie nr " + color.RESET + taskNumberToRemove
+                            + color.GREEN_BOLD_BRIGHT + " zostało usunięte z listy");
                     break;
                 } else if (Objects.equals(confirm, NO_VALUE)) {
                     break;
                 } else {
-                    System.out.println(color.RED + "Nieprawidłowa opcja! wpisz " + YES_NO_OPTIONS);
+                    showIllegalConfirmOption();
                 }
             }
 
@@ -166,6 +182,10 @@ public class TaskManager {
         }
         System.out.println();
 
+    }
+
+    private static void showIllegalConfirmOption() {
+        System.out.print(color.RED + "Nieprawidłowa opcja! wpisz " + YES_NO_OPTIONS + " :");
     }
 
     private static void initialFileRead(String file) {

@@ -132,7 +132,7 @@ public class TaskManager {
     private static void removeTask() {
         showTaskList();
 
-        System.out.println(color.CYAN + "Podaj numer zadania do " + color.RED_UNDERLINED + "usunięcia" + color.CYAN + ":");
+        System.out.print(color.CYAN + "Podaj numer zadania do " + color.RED_UNDERLINED + "usunięcia" + color.CYAN + ":");
 
         while (!SCANNER.hasNextInt()) {
             SCANNER.next();

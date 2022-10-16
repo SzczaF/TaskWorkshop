@@ -190,6 +190,7 @@ public class TaskManager {
                     saveTaskstoFile();
                     break;
                 } else if (Objects.equals(confirm, NO_VALUE)) {
+                    System.out.println(color.GREEN_BOLD_BRIGHT + "Powrót do Menu...");
                     break;
                 } else {
                     showIllegalConfirmOption();

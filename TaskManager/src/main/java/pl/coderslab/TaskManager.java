@@ -1,8 +1,10 @@
 package pl.coderslab;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -17,7 +19,8 @@ public class TaskManager {
     private static final String YES_VALUE = "t";
     private static final String NO_VALUE = "n";
     private static final String YES_NO_OPTIONS = color.WHITE + YES_VALUE + "/" + NO_VALUE;
-    private static final String GOODBYE_MESSAGE = color.RED + "Twoja lista została zapisana. KONIEC PROGRAMU!";
+    private static final String GOODBYE_MESSAGE = color.RED + "KONIEC PROGRAMU!";
+    private static final String DELIMITER = ", ";
 
 
     public static void main(String[] args) {
@@ -54,18 +57,15 @@ public class TaskManager {
             switch (input) {
                 case "add":
                     addTask();
-//                    runMenu();
                     break;
                 case "remove":
                     removeTask();
-//                    runMenu();
                     break;
                 case "list":
                     showTaskList();
-//                    runMenu();
                     break;
                 case "exit":
-//                saveTaskstoFile(); TODO
+                    saveTaskstoFile();
 
                     animateMessage(GOODBYE_MESSAGE);
                     System.exit(0);
@@ -78,9 +78,28 @@ public class TaskManager {
 
     }
 
+    private static void saveTaskstoFile() {
+        String line = "";
+        String txt = "";
+
+        for (Task t : taskList) {
+            line = t.getTaskDescription() + DELIMITER + t.getTaskDate() + DELIMITER + t.isTaskImportant();
+            txt += line + "\n";
+        }
+
+        try {
+            Files.writeString(filePath, txt);
+            System.out.println(color.GREEN_BOLD_BRIGHT + "Twoja lista została zapisana...");
+        } catch (IOException e) {
+            System.out.println(color.RED_BOLD + "Nieudany zapis do pliku!!!");
+            throw new RuntimeException(e);
+        }
+
+    }
+
     private static void animateMessage(String goodbyeMessage) {
         char[] arr = goodbyeMessage.toCharArray();
-        for (char c: arr) {
+        for (char c : arr) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -123,10 +142,10 @@ public class TaskManager {
             }
         }
         taskList.add(task);
-        System.out.print(color.GREEN_BOLD_BRIGHT);
-        System.out.println();
+        System.out.println(color.GREEN_BOLD_BRIGHT);
 //        System.out.println("-----------------------");
-        System.out.println("Zadanie dodane do listy");
+        System.out.println("Zadanie dodane do listy...");
+        saveTaskstoFile();
 //        System.out.println("-----------------------");
         resetColor();
     }
@@ -160,14 +179,15 @@ public class TaskManager {
 
         if (taskExists) {
             System.out.print(color.CYAN + "Czy na pewno usunąć zadanie nr " + color.YELLOW_BOLD_BRIGHT + taskNumberToRemove
-                    + color. CYAN + " ? (" + YES_NO_OPTIONS + color.CYAN + "): ");
+                    + color.CYAN + " ? (" + YES_NO_OPTIONS + color.CYAN + "): ");
             while (true) {
 
                 String confirm = SCANNER.next().trim().toLowerCase();
                 if (Objects.equals(confirm, YES_VALUE)) {
                     taskList.remove(index);
                     System.out.println(color.GREEN_BOLD_BRIGHT + "Zadanie nr " + color.RESET + taskNumberToRemove
-                            + color.GREEN_BOLD_BRIGHT + " zostało usunięte z listy");
+                            + color.GREEN_BOLD_BRIGHT + " zostało usunięte z listy...");
+                    saveTaskstoFile();
                     break;
                 } else if (Objects.equals(confirm, NO_VALUE)) {
                     break;
@@ -194,7 +214,7 @@ public class TaskManager {
         try (Scanner s = new Scanner(filePath)) {
             while (s.hasNextLine()) {
                 String line = s.nextLine();
-                String[] taskItems = line.split(", ");
+                String[] taskItems = line.split(DELIMITER);
 
                 Task task = new Task();
                 task.setTaskDescription(taskItems[0]);

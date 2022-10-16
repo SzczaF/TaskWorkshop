@@ -6,9 +6,9 @@ public class Task {
     private String taskDescription;
     private String taskDate;
     private boolean isTaskImportant;
-    private String defaualtColor = ConsoleColors.GREEN;
-    private String defaualt2Color = ConsoleColors.BLUE;
-    private String importantColor = ConsoleColors.RED;
+    private final String defaualtColor = ConsoleColors.GREEN;
+    private final String defaualt2Color = ConsoleColors.BLUE;
+    private final String importantColor = ConsoleColors.RED;
     private final String pipeColor = ConsoleColors.WHITE;
 
     public String getTaskDescription() {
